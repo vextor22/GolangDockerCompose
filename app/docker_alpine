@@ -1,0 +1,18 @@
+FROM golang:1.12.5 AS build_base
+RUN mkdir /app 
+RUN mkdir /app/restservice
+WORKDIR /app
+COPY go.mod .
+COPY ./restservice/go.mod ./restservice/.
+COPY go.sum . 
+RUN go mod download
+
+FROM build_base AS server_builder
+ADD . /app/ 
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-w -extldflags "-static"' -o app_main .
+RUN ls -lh
+RUN pwd
+
+FROM alpine as app_server
+COPY --from=server_builder /app/app_main /bin/server
+ENTRYPOINT ["/bin/server"]

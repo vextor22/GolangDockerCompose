@@ -16,3 +16,6 @@
 
 #mongo static data
 mongo/data/*
+
+#executable app server
+go_docker

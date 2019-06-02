@@ -1,0 +1,24 @@
+version: '3'
+services:
+  web:
+    build: ./app
+    ports:
+     - "8080:8080"
+  proxy:
+      build: ./nginx
+      volumes:
+          - ./nginx/conf/site.conf:/etc/nginx/conf.d/site.conf
+          - ./nginx/static/:/var/www/static
+      ports:
+         - "80:83"
+  mongo:
+      image: "mongo:3.4-xenial"
+      volumes:
+          - ./mongo/data:/data/db
+      restart: always
+  redis:
+    image: "redis:alpine"
+    volumes:
+        - ./redis:/data
+    restart: always
+
